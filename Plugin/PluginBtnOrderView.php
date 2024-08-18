@@ -24,25 +24,45 @@ class PluginBtnOrderView
 
     public function beforeSetLayout(\Magento\Sales\Block\Adminhtml\Order\View $subject)
     {
-        if ($subject->getOrder()->getState() === \Magento\Sales\Model\Order::STATE_CANCELED) {
-            $formKey = $this->_formKey->getFormKey();
-            $restoreUrl = $this->_backendUrl->getUrl('restoreorder/order/restore', [
-                'order_id' => $subject->getOrderId(),
+        $order = $subject->getOrder();
+        $formKey = $this->_formKey->getFormKey();
+
+        if ($order->getState() === \Magento\Sales\Model\Order::STATE_CANCELED) {
+            // URL to restore order in case of payment failure
+            $restorePaymentFailureUrl = $this->_backendUrl->getUrl('restoreorder/order/restore', [
+                'order_id' => $order->getId(),
                 'form_key' => $formKey
             ]);
 
-            $this->logger->info('Restore Order URL generated: ' . $restoreUrl);
-            
+            // URL to restore canceled order
+            $restoreCanceledUrl = $this->_backendUrl->getUrl('restoreorder/order/restorecanceled', [
+                'order_id' => $order->getId(),
+                'form_key' => $formKey
+            ]);
+
+            $this->logger->info('Restore Payment Failure URL generated: ' . $restorePaymentFailureUrl);
+            $this->logger->info('Restore Canceled Order URL generated: ' . $restoreCanceledUrl);
+
+            // Add button with drop-down menu
             $subject->addButton(
                 'restore_order',
                 [
                     'label' => __('Restore Order'),
-                    'onclick' => "setLocation('{$restoreUrl}')",
-                    'class' => 'restore primary'
+                    'class' => 'restore primary',
+                    'onclick' => '',
+                    'class_name' => \Magento\Backend\Block\Widget\Button\SplitButton::class,
+                    'options' => [
+                        'restore_payment_failure' => [
+                            'label' => __('Restore Order (Payment Failure)'),
+                            'onclick' => "setLocation('{$restorePaymentFailureUrl}')",
+                        ],
+                        'restore_canceled_order' => [
+                            'label' => __('Restore Canceled Order'),
+                            'onclick' => "setLocation('{$restoreCanceledUrl}')",
+                        ],
+                    ],
                 ]
             );
         }
-        
-        return null;
     }
 }
