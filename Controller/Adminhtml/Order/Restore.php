@@ -35,9 +35,9 @@ class Restore extends Action
 
     public function execute()
     {
-        $orderId = $this->getRequest()->getParam('order_id');  // Asegúrate de usar 'order_id'
+        $orderId = $this->getRequest()->getParam('order_id'); 
         
-        // Log para verificar si el order_id se está recibiendo correctamente
+        // Log to check if the order_id is being received correctly
         $this->logger->info('Restore Order - Received order_id: ' . $orderId);
 
         if (!$orderId) {
@@ -51,7 +51,7 @@ class Restore extends Action
                 throw new \Magento\Framework\Exception\LocalizedException(__('Order not found.'));
             }
 
-            // Lógica de restauración del pedido
+            // Order restoration logic
             $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING)
                   ->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
 
