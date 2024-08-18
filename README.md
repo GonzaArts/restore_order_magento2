@@ -43,4 +43,5 @@ The Bluenty Restore Order module for Magento 2 provides functionality to restore
 - Check `var/log/system.log` and `var/log/exception.log` for any errors if the module does not behave as expected.
 
 ## License
-This module is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This module is licensed under the GNU Affero General Public License v3.0. See the [LICENSE](LICENSE) file for more details.
+
