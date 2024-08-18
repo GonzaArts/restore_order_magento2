@@ -3,45 +3,55 @@ namespace Bluenty\RestoreOrder\Controller\Adminhtml\Order;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Framework\DB\Transaction;
-use Magento\Framework\Registry;
 use Magento\Framework\Controller\Result\RedirectFactory;
+use Psr\Log\LoggerInterface;
 
-class Restore extends Action implements HttpGetActionInterface
+class Restore extends Action
 {
     protected $orderRepository;
     protected $invoiceService;
     protected $transaction;
-    protected $registry;
     protected $resultRedirectFactory;
+    protected $logger;
 
     public function __construct(
         Context $context,
         OrderRepository $orderRepository,
         InvoiceService $invoiceService,
         Transaction $transaction,
-        Registry $registry,
-        RedirectFactory $resultRedirectFactory
+        RedirectFactory $resultRedirectFactory,
+        LoggerInterface $logger
     ) {
         parent::__construct($context);
         $this->orderRepository = $orderRepository;
         $this->invoiceService = $invoiceService;
         $this->transaction = $transaction;
-        $this->registry = $registry;
         $this->resultRedirectFactory = $resultRedirectFactory;
+        $this->logger = $logger;
     }
 
     public function execute()
     {
-        $orderId = $this->getRequest()->getParam('id');
-        $order = $this->orderRepository->get($orderId);
+        $orderId = $this->getRequest()->getParam('order_id');  // Asegúrate de usar 'order_id'
+        
+        // Log para verificar si el order_id se está recibiendo correctamente
+        $this->logger->info('Restore Order - Received order_id: ' . $orderId);
 
-        if ($order->getId()) {
-            $this->registry->register('isSecureArea', true);
+        if (!$orderId) {
+            $this->messageManager->addErrorMessage(__('Order ID is missing.'));
+            return $this->resultRedirectFactory->create()->setPath('sales/order/index');
+        }
 
+        try {
+            $order = $this->orderRepository->get($orderId);
+            if (!$order->getId()) {
+                throw new \Magento\Framework\Exception\LocalizedException(__('Order not found.'));
+            }
+
+            // Lógica de restauración del pedido
             $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING)
                   ->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
 
@@ -76,13 +86,11 @@ class Restore extends Action implements HttpGetActionInterface
                 $this->messageManager->addErrorMessage(__('Cannot create an invoice for this order.'));
             }
 
-            $this->registry->unregister('isSecureArea');
-        } else {
-            $this->messageManager->addErrorMessage(__('Order not found.'));
+        } catch (\Exception $e) {
+            $this->messageManager->addErrorMessage(__('Could not restore the order: ' . $e->getMessage()));
         }
 
-        $resultRedirect = $this->resultRedirectFactory->create();
-        return $resultRedirect->setPath('sales/order/view', ['order_id' => $orderId]);
+        return $this->resultRedirectFactory->create()->setPath('sales/order/view', ['order_id' => $orderId]);
     }
 
     protected function _isAllowed()
