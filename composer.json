@@ -1,0 +1,41 @@
+{
+    "name": "bluenty/magento2-restore-order",
+    "description": "The Bluenty Restore Order module for Magento 2.x provides functionality to restore orders that have been canceled or failed due to payment issues.",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+      "AGPL-3.0"
+    ],
+    "require": {
+      "php": "^7.3 || ^7.4 || ^8.0 || ^8.1",
+      "magento/framework": "^102.0 || ^103.0 || ^104.0"
+    },
+    "autoload": {
+      "files": [
+        "registration.php"
+      ],
+      "psr-4": {
+        "Bluenty\\RestoreOrder\\": ""
+      }
+    },
+    "authors": [
+      {
+        "name": "GonzaArts",
+        "email": "gonzalo@powerlinedesign.es",
+        "role": "Software Developer"
+      }
+    ],
+    "support": {
+      "issues": "https://github.com/GonzaArts/restore_order_magento2/issues",
+      "source": "https://github.com/GonzaArts/restore_order_magento2"
+    },
+    "extra": {
+      "map": [
+        [
+          "*",
+          "Bluenty/RestoreOrder"
+        ]
+      ]
+    }
+  }
+  
