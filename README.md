@@ -11,6 +11,8 @@ The Bluenty Restore Order module for Magento 2 provides functionality to restore
 
 ## Installation
 
+### Option 1: Manual Installation
+
 1. **Upload the Module:**
    - Place the module files in `app/code/Bluenty/RestoreOrder/`.
 
@@ -22,8 +24,20 @@ The Bluenty Restore Order module for Magento 2 provides functionality to restore
    php bin/magento setup:di:compile
    php bin/magento cache:flush
    ```
+### Option 2: Install via Composer (Recommended)
 
-3. **Translation:**
+1. **Install the module:**
+ Install the module using Composer by running:
+ ```bash
+ composer require bluenty/magento2-restore-order
+ php bin/magento module:enable Bluenty_RestoreOrder
+ php bin/magento setup:upgrade
+ php bin/magento setup:di:compile
+ php bin/magento cache:flush
+ ```
+
+## Translation
+
    - Spanish (ES_es) translation is available by default. To add more languages, create appropriate translation files in the `i18n` folder.
 
 ## Usage
