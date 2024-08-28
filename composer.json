@@ -29,14 +29,6 @@
     "support": {
       "issues": "https://github.com/GonzaArts/restore_order_magento2/issues",
       "source": "https://github.com/GonzaArts/restore_order_magento2"
-    },
-    "extra": {
-      "map": [
-        [
-          "*",
-          "Bluenty/RestoreOrder"
-        ]
-      ]
     }
   }
   
